@@ -163,6 +163,21 @@ pfp_shw_branches_names = [
 ]
 pfp_shw_branches = ["rec.slc.reco.pfp.shw." + n for n in pfp_shw_branches_names]
 
+pfp_shw_mc_branches_names = [
+    "pdg",
+    "G4ID",
+    "genE",
+    "start.x",
+    "start.y",
+    "start.z",
+    "end.x",
+    "end.y",
+    "end.z",
+
+]
+
+pfp_shw_mc_branches = ["rec.slc.reco.pfp.shw.truth.p." + n for n in pfp_shw_mc_branches_names]
+
 
 # TODO --> Finish putting all the branches
 reco_branches = {

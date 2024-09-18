@@ -65,7 +65,13 @@ if v > 0:
 
 
 
+trkScore_cuts = [0.3, 0.4, 0.5, 0.6, 0.7]
+
+
 slc_true_pdgs = []
+
+photon_trk_scores = []
+
 
 evCount = 0
 for event in recTree:
@@ -86,12 +92,18 @@ for event in recTree:
 	# PFP high level branches
 	pfp_br = load_branches(event, pfp_branches)
 	
-
 	# reco tracks
 	trk_br = load_branches(event, pfp_trk_branches)
 	
+	# True Track Info
+	trk_mc_br = load_branches(event, pfp_trk_mc_branches)
+	
 	# reco showers
 	shw_br = load_branches(event, pfp_shw_branches)
+
+	# True Shower info
+	shw_mc_br = load_branches(event, pfp_shw_mc_branches)
+
 
 	# Finished loading branches
 	
@@ -108,12 +120,29 @@ for event in recTree:
 	shw_keys = list(shw_br.keys())
 	num_trks = len(trk_br[trk_keys[0]])
 	num_shws = len(shw_br[shw_keys[0]])
-
+	num_shw_mc = len(shw_mc_br["rec.slc.reco.pfp.shw.truth.p.pdg"])
 	
+	for num in range(len(shw_mc_br["rec.slc.reco.pfp.shw.truth.p.pdg"])):
+		if shw_mc_br["rec.slc.reco.pfp.shw.truth.p.pdg"][num] == 22:
+			photon_trk_scores.append(pfp_br["rec.slc.reco.pfp.trackScore"][num])
+
 	if evCount%10 == 0 and v > 0:
 		print("Number of tracks", num_trks)
 		print("Number of shower", num_shws)
+		print("Number of shw_mc pdgs", num_shw_mc)
 		print("")
+
+
+
+
+	# Slice Loop
+
+	for slcID in slc_br["rec.slc.self"]:
+		
+		if evCount%10 == 0 and v > 0:
+			print("Slice Self", slcID)
+
+
 
 	# increment the event count before going to the next event
 	evCount += 1
@@ -134,6 +163,17 @@ h_slc_true_pdg.Draw("HIST")
 h_slc_true_pdg.GetXaxis().SetTitle("True Slice PDG")
 c.SaveAs("../../Figs/test_slice_true_pdg.png")
 
+
+h_photon_trk_score = ROOT.TH1D("h_photon_trk_score", "", 100, min(photon_trk_scores) - 0.2, max(photon_trk_scores) + 0.2)
+for num in photon_trk_scores:
+	h_photon_trk_score.Fill(num)
+
+c = ROOT.TCanvas("c", "c", 700, 500)
+h_photon_trk_score.SetLineColor(4)
+h_photon_trk_score.SetLineWidth(2)
+h_photon_trk_score.GetXaxis().SetTitle("Photon Track Score")
+h_photon_trk_score.Draw("HISTE")
+c.SaveAs("../../Figs/test_photon_trk_score.png")
 
 
 infile.Close()
