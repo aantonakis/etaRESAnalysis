@@ -164,15 +164,20 @@ h_slc_true_pdg.GetXaxis().SetTitle("True Slice PDG")
 c.SaveAs("../../Figs/test_slice_true_pdg.png")
 
 
-h_photon_trk_score = ROOT.TH1D("h_photon_trk_score", "", 100, min(photon_trk_scores) - 0.2, max(photon_trk_scores) + 0.2)
+h_photon_trk_score = ROOT.TH1D("h_photon_trk_score", "", 100, min(photon_trk_scores) - 0.2, 1)
 for num in photon_trk_scores:
 	h_photon_trk_score.Fill(num)
 
 c = ROOT.TCanvas("c", "c", 700, 500)
+h_photon_trk_score.SetStats(0)
 h_photon_trk_score.SetLineColor(4)
 h_photon_trk_score.SetLineWidth(2)
 h_photon_trk_score.GetXaxis().SetTitle("Photon Track Score")
 h_photon_trk_score.Draw("HISTE")
+
+line = ROOT.TLine(0.5, 0, 0.5, 1.1*h_photon_trk_score.GetMaximum())
+line.SetLineColor(2)  # Optional: Set line color
+line.Draw("Same")
 c.SaveAs("../../Figs/test_photon_trk_score.png")
 
 
