@@ -18,6 +18,24 @@ interaction_codes = {
     13: "Weak Mix"
 }
 
+interaction_code_colors = {
+    0: 2,
+    1: 4,
+    2: 6,
+    3: 3,
+    4: 5,
+    5: 7,
+    6: 8,
+    7: 9,
+    8: 10,
+    9: 11,
+    10: 12,
+    11: 13,
+    12: 14,
+    13: 15,
+}
+
+
 pdg_labels = {
         14:"#nu_{#mu}",
         -14:"#hbar{#nu}_{#mu}",

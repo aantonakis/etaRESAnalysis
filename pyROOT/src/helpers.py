@@ -49,10 +49,36 @@ def get_true_eta_mult(slc_idx, slc_mc_br):
 	return pdgs.count(221)
 
 
+def get_prim_eta_indices(slc_idx, slc_mc_br):
+	prim_idxs = get_slc_true_prim(slc_idx, slc_mc_br)
+	eta_idxs = []
+	for idx in prim_idxs:
+		if slc_mc_br["rec.slc.truth.prim.pdg"][idx] == 221:
+			eta_idxs.append(idx)
+	return eta_idxs
+
+
 def get_prim_pi0_mult(slc_idx, slc_mc_br):
 	prim_indices = get_slc_true_prim(slc_idx, slc_mc_br)
 	pdgs = [slc_mc_br["rec.slc.truth.prim.pdg"][num] for num in prim_indices]
 	return pdgs.count(111)
+
+
+
+def is_slc_RES(slc_idx, slc_mc_br):
+	if slc_mc_br["rec.slc.truth.genie_mode"][slc_idx] == 1:
+		return 1
+	return 0
+
+
+
+def get_slc_eta_info(slc_idx, slc_mc_br):
+	eta_idxs = get_prim_eta_indices(slc_idx, slc_mc_br)
+	nuID = slc_mc_br["rec.slc.truth.pdg"][slc_idx]
+	mode = slc_mc_br["rec.slc.truth.genie_mode"][slc_idx]
+	Npi0 = get_prim_pi0_mult(slc_idx, slc_mc_br)
+	E = slc_mc_br["rec.slc.truth.prim.genE"][eta_idxs[0]]
+	return [nuID, mode, Npi0, E]
 
 
 # Histogram Helpers ....
