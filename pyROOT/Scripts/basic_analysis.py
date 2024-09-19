@@ -75,11 +75,15 @@ photon_trk_scores = []
 
 pfp_shw_true_pdgs = []
 
+num_prim_true_etas_per_slc = []
+
+
 # 2D histo to hold the eff vs purity of the slice truth matching
 h_2d_slc_pur_eff = ROOT.TH2D("h_2d_slc_pur_eff", "", 11, 0, 1.1, 11, 0, 1.1)
 h_2d_slc_pur_eff.GetXaxis().SetTitle("Slice TMatch Eff")
 h_2d_slc_pur_eff.GetYaxis().SetTitle("Slice TMatch Pur")
 
+N_tmatch_slices = 0
 
 evCount = 0
 for event in recTree:
@@ -134,7 +138,7 @@ for event in recTree:
 	for num in range(len(slc_br["rec.slc.tmatch.eff"])):
 		if slc_br["rec.slc.tmatch.eff"][num] < 0 or slc_br["rec.slc.tmatch.pur"][num] < 0:
 			print("Strange: Negative Pur or Eff ???????????")
-
+		N_tmatch_slices += 1
 		h_2d_slc_pur_eff.Fill(slc_br["rec.slc.tmatch.eff"][num], slc_br["rec.slc.tmatch.pur"][num])
 
 
@@ -151,6 +155,15 @@ for event in recTree:
 		print("")
 
 
+
+
+	for num in range(len(slc_br["rec.slc.self"])):
+		nEta = get_true_eta_mult(num, slc_mc_br)
+		num_prim_true_etas_per_slc.append(nEta)
+
+
+
+
 	# Slice Loop
 
 	for slcID in slc_br["rec.slc.self"]:
@@ -165,6 +178,11 @@ for event in recTree:
 
 
 # plotting ... 
+
+print("Debugging ...")
+print("Number of tmatch slices", N_tmatch_slices)
+print("Number of true slice pdgs", len(slc_true_pdgs))
+print("")
 
 unique_slc_pdgs = list(set(slc_true_pdgs))
 
@@ -184,6 +202,21 @@ c = ROOT.TCanvas("c", "c", 700, 500)
 h_2d_slc_pur_eff.SetStats(0)
 h_2d_slc_pur_eff.Draw("Colz")
 c.SaveAs(fig_dir+"test_slice_tmatch_eff_vs_pur.png")
+
+# Number of True Prime Etas per Slice
+unique_num_prim_etas_per_slice = list(set(num_prim_true_etas_per_slc))
+
+h_slc_true_num_prim_etas = ROOT.TH1D("h_slc_true_num_prim_etas", "", len(unique_num_prim_etas_per_slice), 0, len(unique_num_prim_etas_per_slice))
+for num in range(len(unique_num_prim_etas_per_slice)):
+	h_slc_true_num_prim_etas.SetBinContent(num + 1, num_prim_true_etas_per_slc.count(unique_num_prim_etas_per_slice[num]))
+	h_slc_true_num_prim_etas.GetXaxis().SetBinLabel(num + 1, str(unique_num_prim_etas_per_slice[num]))
+
+c = ROOT.TCanvas("c", "c", 700, 500)
+h_slc_true_num_prim_etas.SetLineWidth(2)
+h_slc_true_num_prim_etas.Draw("HIST")
+h_slc_true_num_prim_etas.GetXaxis().SetTitle("True Number of Prime Etas Per Slice")
+c.SaveAs(fig_dir+"test_slice_true_num_prim_etas.png")
+
 
 
 # PFP Shower True PDGs

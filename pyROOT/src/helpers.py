@@ -28,4 +28,23 @@ def get_showers(sliceID, pfp_br, score):
 	return shw_indices
 
 
+# return all of the true primary indices associated with this slice
+def get_slc_true_prim(slc_idx, slc_mc_br):
+	prim_indices = []
+	nprim = slc_mc_br['rec.slc.truth.nprim']
+	prim_start = 0
+	for num in range(0, slc_idx):
+		prim_start += nprim[num]
+	
+	for num in range(nprim[slc_idx]):
+		prim_indices.append(prim_start + num)
+	
+	return prim_indices
+
+
+def get_true_eta_mult(slc_idx, slc_mc_br):
+	prim_indices = get_slc_true_prim(slc_idx, slc_mc_br)
+	pdgs = [slc_mc_br["rec.slc.truth.prim.pdg"][num] for num in prim_indices]
+	return pdgs.count(221)
+
 
