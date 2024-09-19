@@ -1,4 +1,5 @@
 import numpy as np
+import ROOT
 from branches import *
 
 
@@ -46,5 +47,22 @@ def get_true_eta_mult(slc_idx, slc_mc_br):
 	prim_indices = get_slc_true_prim(slc_idx, slc_mc_br)
 	pdgs = [slc_mc_br["rec.slc.truth.prim.pdg"][num] for num in prim_indices]
 	return pdgs.count(221)
+
+
+
+
+# Histogram Helpers ....
+
+
+
+def make_unique_counts_hist(arr, name):
+	unique_elements = list(set(arr))
+	h = ROOT.TH1D(name, "", len(unique_elements), 0, len(unique_elements))
+	for num in range(len(unique_elements)):
+		h.SetBinContent(num + 1, arr.count(unique_elements[num]))
+		h.GetXaxis().SetBinLabel(num + 1, str(unique_elements[num]))
+	return h
+
+
 
 

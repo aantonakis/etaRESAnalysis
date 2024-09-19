@@ -77,6 +77,7 @@ pfp_shw_true_pdgs = []
 
 num_prim_true_etas_per_slc = []
 
+num_pi0_per_eta = []
 
 # 2D histo to hold the eff vs purity of the slice truth matching
 h_2d_slc_pur_eff = ROOT.TH2D("h_2d_slc_pur_eff", "", 11, 0, 1.1, 11, 0, 1.1)
@@ -160,8 +161,9 @@ for event in recTree:
 	for num in range(len(slc_br["rec.slc.self"])):
 		nEta = get_true_eta_mult(num, slc_mc_br)
 		num_prim_true_etas_per_slc.append(nEta)
-
-
+		if nEta > 0:
+			num_pi0 = slc_mc_br["rec.slc.truth.npizero"][num] # number of pi0s in this slice --> Maybe not primary?
+			num_pi0_per_eta.append(num_pi0)
 
 
 	# Slice Loop
@@ -212,11 +214,22 @@ for num in range(len(unique_num_prim_etas_per_slice)):
 	h_slc_true_num_prim_etas.GetXaxis().SetBinLabel(num + 1, str(unique_num_prim_etas_per_slice[num]))
 
 c = ROOT.TCanvas("c", "c", 700, 500)
+h_slc_true_num_prim_etas.SetStats(0)
 h_slc_true_num_prim_etas.SetLineWidth(2)
 h_slc_true_num_prim_etas.Draw("HIST")
 h_slc_true_num_prim_etas.GetXaxis().SetTitle("True Number of Prime Etas Per Slice")
 c.SaveAs(fig_dir+"test_slice_true_num_prim_etas.png")
 
+
+# Fraction of Etas with diff pi0 multiplicity
+h_eta_pi0_mult = make_unique_counts_hist(num_pi0_per_eta, "h_num_pi0_per_eta")
+h_eta_pi0_mult.Scale(1.0/h_eta_pi0_mult.Integral())
+c = ROOT.TCanvas("c", "c", 700, 500)
+h_eta_pi0_mult.SetStats(0)
+h_eta_pi0_mult.SetLineWidth(2)
+h_eta_pi0_mult.Draw("HIST")
+h_eta_pi0_mult.GetXaxis().SetTitle("Number of Pi0s")
+c.SaveAs(fig_dir+"test_eta_branching_fraction.png")
 
 
 # PFP Shower True PDGs
