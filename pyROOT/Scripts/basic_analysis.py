@@ -11,6 +11,9 @@ from helpers import *
 
 infile = ROOT.TFile.Open(sys.argv[1], "READ")
 
+
+fig_dir = "../../Figs/TPCEtaNoCosmic/"
+
 # verbosity level
 v = int(sys.argv[2])
 
@@ -50,8 +53,6 @@ if v > 0:
 
 
 
-
-
 # Initialize histos and TNtuples
 
 #h_trk_score = ROOT.TH1D("h_trk_score", )
@@ -71,6 +72,8 @@ trkScore_cuts = [0.3, 0.4, 0.5, 0.6, 0.7]
 slc_true_pdgs = []
 
 photon_trk_scores = []
+
+pfp_shw_true_pdgs = []
 
 
 evCount = 0
@@ -122,7 +125,9 @@ for event in recTree:
 	num_shws = len(shw_br[shw_keys[0]])
 	num_shw_mc = len(shw_mc_br["rec.slc.reco.pfp.shw.truth.p.pdg"])
 	
+	# Loop over the true shower info --> Maybe can see if it indicates pfps that aren't actually showers ????
 	for num in range(len(shw_mc_br["rec.slc.reco.pfp.shw.truth.p.pdg"])):
+		pfp_shw_true_pdgs.append(shw_mc_br["rec.slc.reco.pfp.shw.truth.p.pdg"][num])
 		if shw_mc_br["rec.slc.reco.pfp.shw.truth.p.pdg"][num] == 22:
 			photon_trk_scores.append(pfp_br["rec.slc.reco.pfp.trackScore"][num])
 
@@ -131,8 +136,6 @@ for event in recTree:
 		print("Number of shower", num_shws)
 		print("Number of shw_mc pdgs", num_shw_mc)
 		print("")
-
-
 
 
 	# Slice Loop
@@ -148,7 +151,6 @@ for event in recTree:
 	evCount += 1
 
 
-
 # plotting ... 
 
 unique_slc_pdgs = list(set(slc_true_pdgs))
@@ -161,9 +163,26 @@ for num in range(len(unique_slc_pdgs)):
 c = ROOT.TCanvas("c", "c", 700, 500)
 h_slc_true_pdg.Draw("HIST")
 h_slc_true_pdg.GetXaxis().SetTitle("True Slice PDG")
-c.SaveAs("../../Figs/test_slice_true_pdg.png")
+c.SaveAs(fig_dir+"test_slice_true_pdg.png")
 
 
+# PFP Shower True PDGs
+unique_pfp_shw_true_pdgs = list(set(pfp_shw_true_pdgs))
+h_pfp_shw_true_pdg = ROOT.TH1D("h_pfp_shw_true_pdg", "", len(unique_pfp_shw_true_pdgs), 0, len(unique_pfp_shw_true_pdgs))
+for num in range(len(unique_pfp_shw_true_pdgs)):
+	h_pfp_shw_true_pdg.SetBinContent(num + 1, pfp_shw_true_pdgs.count(unique_pfp_shw_true_pdgs[num]))
+	h_pfp_shw_true_pdg.GetXaxis().SetBinLabel(num + 1, str(unique_pfp_shw_true_pdgs[num]))
+
+c = ROOT.TCanvas("c", "c", 700, 500)
+h_pfp_shw_true_pdg.SetLineColor(4)
+h_pfp_shw_true_pdg.SetLineWidth(2)
+h_pfp_shw_true_pdg.Draw("HISTE")
+h_pfp_shw_true_pdg.GetXaxis().SetTitle("PFP Shower True PDG")
+c.SaveAs(fig_dir+"test_pfp_shw_true_pdg.png")
+
+
+
+# Photon Track Score Plotting ...
 h_photon_trk_score = ROOT.TH1D("h_photon_trk_score", "", 100, min(photon_trk_scores) - 0.2, 1)
 for num in photon_trk_scores:
 	h_photon_trk_score.Fill(num)
@@ -176,9 +195,11 @@ h_photon_trk_score.GetXaxis().SetTitle("Photon Track Score")
 h_photon_trk_score.Draw("HISTE")
 
 line = ROOT.TLine(0.5, 0, 0.5, 1.1*h_photon_trk_score.GetMaximum())
-line.SetLineColor(2)  # Optional: Set line color
+line.SetLineColor(2)
+line.SetLineStyle(10)
 line.Draw("Same")
-c.SaveAs("../../Figs/test_photon_trk_score.png")
+
+c.SaveAs(fig_dir+"test_photon_trk_score.png")
 
 
 infile.Close()
