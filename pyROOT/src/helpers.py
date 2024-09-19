@@ -23,7 +23,7 @@ def get_showers(sliceID, pfp_br, score):
 	pfps = get_slice_pfps(sliceID, pfp_br)
 	shw_indices = []
 	for idx in pfps:
-		if pfp_br["rec.slc.reco.pfp.trackScore"][idx] < score:
+		if -5 < pfp_br["rec.slc.reco.pfp.trackScore"][idx] < score:
 			shw_indices.append(idx)
 
 	return shw_indices

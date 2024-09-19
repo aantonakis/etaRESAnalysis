@@ -60,7 +60,7 @@ h_eta_energy_all.GetXaxis().SetTitle("True Eta Energy [GeV]")
 h_eta_energy_all.GetYaxis().SetTitle("Counts")
 h_eta_energy_all.SetLineColor(1)
 h_eta_energy_all.SetLineWidth(2)
-h_eta_energy_all.Draw("HIST")
+h_eta_energy_all.Draw("HISTE")
 for h in h_energy_list:
 	h.Draw("HISTE Same")
 leg.Draw("Same")
