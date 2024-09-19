@@ -75,6 +75,11 @@ photon_trk_scores = []
 
 pfp_shw_true_pdgs = []
 
+# 2D histo to hold the eff vs purity of the slice truth matching
+h_2d_slc_pur_eff = ROOT.TH2D("h_2d_slc_pur_eff", "", 10, 0, 1, 10, 0, 1)
+h_2d_slc_pur_eff.GetXaxis().SetTitle("Slice TMatch Eff")
+h_2d_slc_pur_eff.GetYaxis().SetTitle("Slice TMatch Pur")
+
 
 evCount = 0
 for event in recTree:
@@ -125,6 +130,11 @@ for event in recTree:
 	num_shws = len(shw_br[shw_keys[0]])
 	num_shw_mc = len(shw_mc_br["rec.slc.reco.pfp.shw.truth.p.pdg"])
 	
+	# Loop over the slice info:
+	for num in range(len(slc_br["rec.slc.tmatch.eff"])):
+		h_2d_slc_pur_eff.Fill(slc_br["rec.slc.tmatch.eff"][num], slc_br["rec.slc.tmatch.pur"][num])
+
+
 	# Loop over the true shower info --> Maybe can see if it indicates pfps that aren't actually showers ????
 	for num in range(len(shw_mc_br["rec.slc.reco.pfp.shw.truth.p.pdg"])):
 		pfp_shw_true_pdgs.append(shw_mc_br["rec.slc.reco.pfp.shw.truth.p.pdg"][num])
@@ -161,9 +171,16 @@ for num in range(len(unique_slc_pdgs)):
 	h_slc_true_pdg.GetXaxis().SetBinLabel(num + 1, str(unique_slc_pdgs[num]))
 
 c = ROOT.TCanvas("c", "c", 700, 500)
+h_slc_true_pdg.SetLineWidth(2)
 h_slc_true_pdg.Draw("HIST")
 h_slc_true_pdg.GetXaxis().SetTitle("True Slice PDG")
 c.SaveAs(fig_dir+"test_slice_true_pdg.png")
+
+
+c = ROOT.TCanvas("c", "c", 700, 500)
+h_2d_slc_pur_eff.SetStats(0)
+h_2d_slc_pur_eff.Draw("Colz")
+c.SaveAs(fig_dir+"test_slice_tmatch_eff_vs_pur.png")
 
 
 # PFP Shower True PDGs
@@ -174,6 +191,7 @@ for num in range(len(unique_pfp_shw_true_pdgs)):
 	h_pfp_shw_true_pdg.GetXaxis().SetBinLabel(num + 1, str(unique_pfp_shw_true_pdgs[num]))
 
 c = ROOT.TCanvas("c", "c", 700, 500)
+h_pfp_shw_true_pdg.SetStats(0)
 h_pfp_shw_true_pdg.SetLineColor(4)
 h_pfp_shw_true_pdg.SetLineWidth(2)
 h_pfp_shw_true_pdg.Draw("HISTE")
