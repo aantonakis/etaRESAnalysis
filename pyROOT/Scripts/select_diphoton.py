@@ -62,26 +62,26 @@ for event in recTree:
 				conv2 = shw_br["rec.slc.reco.pfp.shw.conversion_gap"][new_idxs[1]]
 				E1 = shw_br["rec.slc.reco.pfp.shw.bestplane_energy"][new_idxs[0]]
 				E2 = shw_br["rec.slc.reco.pfp.shw.bestplane_energy"][new_idxs[1]]
-				dir1x = shw_br["rec.slc.reco.pfp.shw.dir.x"][new_idxs[0]]			
-				dir1y = shw_br["rec.slc.reco.pfp.shw.dir.y"][new_idxs[0]]			
-				dir1z = shw_br["rec.slc.reco.pfp.shw.dir.z"][new_idxs[0]]			
-				dir2x = shw_br["rec.slc.reco.pfp.shw.dir.x"][new_idxs[1]]			
-				dir2y = shw_br["rec.slc.reco.pfp.shw.dir.y"][new_idxs[1]]			
-				dir2z = shw_br["rec.slc.reco.pfp.shw.dir.z"][new_idxs[1]]			
-				dir1 = np.array([dir1x, dir1y, dir1z])
-				dir2 = np.array([dir2x, dir2y, dir2z])
-				costheta = np.dot(dir1, dir2)
-				print("E1", E1, "E2", E2)
-				print("dir1", dir1)
-				print("dir2", dir2)
-				print("conv1", conv1)
-				print("conv2", conv2)
-				print("costheta", costheta)
+				if E1 > 0.05 and E2 > 0.05:
+					dir1x = shw_br["rec.slc.reco.pfp.shw.dir.x"][new_idxs[0]]			
+					dir1y = shw_br["rec.slc.reco.pfp.shw.dir.y"][new_idxs[0]]			
+					dir1z = shw_br["rec.slc.reco.pfp.shw.dir.z"][new_idxs[0]]			
+					dir2x = shw_br["rec.slc.reco.pfp.shw.dir.x"][new_idxs[1]]			
+					dir2y = shw_br["rec.slc.reco.pfp.shw.dir.y"][new_idxs[1]]			
+					dir2z = shw_br["rec.slc.reco.pfp.shw.dir.z"][new_idxs[1]]			
+					dir1 = np.array([dir1x, dir1y, dir1z])
+					dir2 = np.array([dir2x, dir2y, dir2z])
+					costheta = np.dot(dir1, dir2)
+					print("E1", E1, "E2", E2)
+					print("dir1", dir1)
+					print("dir2", dir2)
+					print("conv1", conv1)
+					print("conv2", conv2)
+					print("costheta", costheta)
 			
+					M = np.sqrt(2*E1*E2*(1 - costheta))
 
-				M = np.sqrt(2*E1*E2*(1 - costheta))
-
-				diphoton_inv_mass.append(M)
+					diphoton_inv_mass.append(M)
 
 	# increment the event count before going to the next event
 	evCount += 1
