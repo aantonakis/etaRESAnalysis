@@ -76,7 +76,7 @@ photon_trk_scores = []
 pfp_shw_true_pdgs = []
 
 # 2D histo to hold the eff vs purity of the slice truth matching
-h_2d_slc_pur_eff = ROOT.TH2D("h_2d_slc_pur_eff", "", 10, 0, 1, 10, 0, 1)
+h_2d_slc_pur_eff = ROOT.TH2D("h_2d_slc_pur_eff", "", 11, 0, 1.1, 11, 0, 1.1)
 h_2d_slc_pur_eff.GetXaxis().SetTitle("Slice TMatch Eff")
 h_2d_slc_pur_eff.GetYaxis().SetTitle("Slice TMatch Pur")
 
@@ -132,6 +132,9 @@ for event in recTree:
 	
 	# Loop over the slice info:
 	for num in range(len(slc_br["rec.slc.tmatch.eff"])):
+		if slc_br["rec.slc.tmatch.eff"][num] < 0 or slc_br["rec.slc.tmatch.pur"][num] < 0:
+			print("Strange: Negative Pur or Eff ???????????")
+
 		h_2d_slc_pur_eff.Fill(slc_br["rec.slc.tmatch.eff"][num], slc_br["rec.slc.tmatch.pur"][num])
 
 
