@@ -162,7 +162,8 @@ for event in recTree:
 		nEta = get_true_eta_mult(num, slc_mc_br)
 		num_prim_true_etas_per_slc.append(nEta)
 		if nEta > 0:
-			num_pi0 = slc_mc_br["rec.slc.truth.npizero"][num] # number of pi0s in this slice --> Maybe not primary?
+			num_pi0 = get_prim_pi0_mult(num, slc_mc_br)
+			#num_pi0 = slc_mc_br["rec.slc.truth.npizero"][num] # number of pi0s in this slice --> Maybe not primary?
 			num_pi0_per_eta.append(num_pi0)
 
 

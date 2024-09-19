@@ -49,6 +49,10 @@ def get_true_eta_mult(slc_idx, slc_mc_br):
 	return pdgs.count(221)
 
 
+def get_prim_pi0_mult(slc_idx, slc_mc_br):
+	prim_indices = get_slc_true_prim(slc_idx, slc_mc_br)
+	pdgs = [slc_mc_br["rec.slc.truth.prim.pdg"][num] for num in prim_indices]
+	return pdgs.count(111)
 
 
 # Histogram Helpers ....
