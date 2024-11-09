@@ -1,4 +1,4 @@
-hdr_branches = ["rec.hdr.run", "rec.hdr.subrun", "rec.hdr.pot"]
+hdr_branches = ["rec.hdr.run", "rec.hdr.subrun", "rec.hdr.evt", "rec.hdr.pot"]
 
 mc_branches = [
     "rec.mc.nu.E",

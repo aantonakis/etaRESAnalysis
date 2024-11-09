@@ -127,6 +127,7 @@ for event in recTree:
 
 	# What are the slice pdg values
 	for slc_pdg in slc_br['rec.slc.truth.pdg']:
+		print("slc_pdg", slc_pdg)
 		slc_true_pdgs.append(slc_pdg)
 
 	trk_keys = list(trk_br.keys())
