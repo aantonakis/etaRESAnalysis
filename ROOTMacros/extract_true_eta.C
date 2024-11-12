@@ -8,7 +8,8 @@
 #include <sstream>
 #include <algorithm>
 #include "../include/SliceTruth.h"
-
+#include "../include/MCNuTruth.h"
+#include "../include/ParticleTruth.h"
 
 using namespace analysis;
 
@@ -19,12 +20,22 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     TFile* outfile = new TFile(output_file, "RECREATE");
 
 
-    TNtuple* slc_tree = new TNtuple("slc_tree", "slc_tree", "run:subrun:ev:slc:pdg:iscc:isnc:mode:Q2:vtx_x:vtx_y:vtx_z");
-    //TNtuple* nu_tree = new TNtuple("nu_tree", "nu_tree", "slc:pdg:E");
-    //TNtuple* prim_tree = new TNtuple("prim_tree", "prim_tree", "slc:pdg:mode:genE:x:y:z:inTPC");
-    //TNtuple* nu_prim_tree = new TNtuple("nu_prim_tree", "nu_prim_tree", 
-    //					"slc:pdg:genE:start_x:start_y:start_z:end_x:end_y:end_z:px:py:pz");
+    //TH1D* hist_tot_pot = new TH1D(); 
+    TH1D* hist_tot_pot = (TH1D*)infile->Get("TotalPOT");
 
+    TNtuple* slc_tree = new TNtuple("slc_tree", "slc_tree", "run:subrun:evt:slc:mode:pdg:iscc:isnc:vtx_x:vtx_y:vtx_z");
+
+    //TNtuple* slc_tree = new TNtuple("slc_tree", "slc_tree", "run:subrun:evt:slc:mode:slc_pdg:x:y:z")
+    TNtuple* particle_tree1 = new TNtuple("particle_tree1", "particle_tree1", 
+    					 "run:subrun:evt:slc:pdg:G4ID:parent:genE:px:py:pz");
+    
+
+    TNtuple* particle_tree2 = new TNtuple("particle_tree2", "particle_tree2", 
+    					 "run:subrun:evt:slc:start_x:start_y:start_z:end_x:end_y:end_z");
+
+
+    TNtuple* daughter_tree1 = new TNtuple("daughter_tree1", "daughter_tree1", "run:subrun:evt:slc:pdg:parent:genE:px:py:pz");
+    TNtuple* daughter_tree2 = new TNtuple("daughter_tree2", "daughter_tree2", "run:subrun:evt:slc:start_x:start_y:start_z:end_x:end_y:end_z");
 
     // Access the event tree
     TTree* event_tree = (TTree*)infile->Get("recTree");
@@ -35,133 +46,192 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     SliceTruth slc_truth;
     slc_truth.setSliceTruthAddresses(event_tree);
 
+    MCNuTruth nu_truth;
+    nu_truth.setMCNuTruthAddresses(event_tree);
+
+    ParticleTruth part_truth;
+    part_truth.setParticleTruthAddresses(event_tree);
+
 
     // Header Variables
-    //UInt_t run = 0;
-    //UInt_t subrun = 0;
-    //UInt_t evt = 0;
+    UInt_t run;
+    UInt_t subrun;
+    UInt_t evt;
     //float pot = 0.;
-    //event_tree->SetBranchAddress("rec.hdr.run", &run);
-    //event_tree->SetBranchAddress("rec.hdr.subrun", &subrun);
-    //event_tree->SetBranchAddress("rec.hdr.evt", &evt);
+    event_tree->SetBranchAddress("rec.hdr.run", &run);
+    event_tree->SetBranchAddress("rec.hdr.subrun", &subrun);
+    event_tree->SetBranchAddress("rec.hdr.evt", &evt);
     //event_tree->SetBranchAddress("rec.hdr.pot", &pot);
 
-// ------------------------- Slice Branches --------------------------------------------------- //
-/*
-    // Slice Position --> Maybe the true Neutrino Vertex ?
-    Float_t slc_x;
-    Float_t slc_y;
-    Float_t slc_z;
-    event_tree->SetBranchAddress("rec.slc.truth.position.x", &slc_x);
-    event_tree->SetBranchAddress("rec.slc.truth.position.y", &slc_y);
-    event_tree->SetBranchAddress("rec.slc.truth.position.z", &slc_z);
-    
-    Int_t slc_id;
-    event_tree->SetBranchAddress("rec.slc.self", &slc_id);
-
-    Int_t slc_pdg;
-    event_tree->SetBranchAddress("rec.slc.truth.pdg", &slc_pdg);
-    
-    Char_t slc_iscc;
-    event_tree->SetBranchAddress("rec.slc.truth.iscc", &slc_iscc);
-    
-    Char_t slc_isnc;
-    event_tree->SetBranchAddress("rec.slc.truth.isnc", &slc_isnc);
-
-    Short_t slc_genie_mode;
-    event_tree->SetBranchAddress("rec.slc.truth.genie_mode", &slc_genie_mode);
-    
-    Float_t slc_Q2;
-    event_tree->SetBranchAddress("rec.slc.truth.Q2", &slc_Q2);
-    
-    Int_t slc_nprim;
-    event_tree->SetBranchAddress("rec.slc.truth.nprim", &slc_nprim);
-    
-    Int_t slc_parent_pdg;
-    event_tree->SetBranchAddress("rec.slc.truth.parent_pdg", &slc_parent_pdg);
-       
-    Float_t slc_vtx_x;
-    Float_t slc_vtx_y;
-    Float_t slc_vtx_z;
-    event_tree->SetBranchAddress( "rec.slc.truth.vtx.x", &slc_vtx_x);
-    event_tree->SetBranchAddress( "rec.slc.truth.vtx.y", &slc_vtx_y);
-    event_tree->SetBranchAddress( "rec.slc.truth.vtx.z", &slc_vtx_z);
-
-    Float_t slc_time;
-    event_tree->SetBranchAddress( "rec.slc.truth.time", &slc_time);
-
-*/
-// ------------------------- Prim Branches --------------------------------------------------- //
-
-    /*
-    std::vector<Char_t>* prim_cont_tpc;
-    event_tree->SetBranchAddress("rec.slc.truth.prim.cont_tpc", &prim_cont_tpc);
-    
-    std::vector<Float_t>* prim_genE;
-    event_tree->SetBranchAddress("rec.slc.truth.prim.genE", &prim_genE);
-    
-    std::vector<Int_t>* prim_interaction_id;
-    event_tree->SetBranchAddress("rec.slc.truth.prim.interaction_id", &prim_interaction_id);
-   
-    std::vector<Int_t>* prim_pdg;
-    event_tree->SetBranchAddress("rec.slc.truth.prim.pdg", &prim_pdg);
-    
-    std::vector<Int_t>* prim_G4ID;
-    event_tree->SetBranchAddress("rec.slc.truth.prim.G4ID", &prim_G4ID);
-    */
 
 
-
-    std::cout << "Start Slice Loop ..." << std::endl;
+    std::cout << "Start Event Loop ..." << std::endl;
     // Start loop over events which are slices in the flat cafs effectively
     int count = 0;
     for (Long64_t i = 0; i < n_entries; ++i) {
       event_tree->GetEntry(i);
-      std::cout << "Number of slices " << slc_truth.slc_length << std::endl;
+
+      	
+      //if (count % 10 == 0) {
+      std::cout << std::endl << std::endl << std::endl;
+      std::cout << "// ------------------ Processing event ------------------ // " << count << std::endl;
+      std::cout << "Run " << run << " subrun " << subrun << std::endl;
+
+      count += 1;
+      //}
+      std::cout << "Number of slices in this event " << slc_truth.slc_length << std::endl;
+      std::cout << "Number of mc neutrinos in this event " << nu_truth.nu_length << std::endl;
+      std::cout << "Number of true particles in this event " << part_truth.part_length << std::endl;
+      std::cout << "Number of primary daughters in this event " << slc_truth.nprim_daughters_tot << std::endl;
+      std::cout << std::endl;
+      std::cout << std::endl;
+
+      for (int nu = 0; nu < nu_truth.nu_length; ++nu) {std::cout << "MC Nu Mode " << nu_truth.nu_genie_mode[nu] << std::endl;}
 
       std::cout << "Loop over slices" << std::endl;
+      int nprim_prev = 0;
       for (int s = 0; s < slc_truth.slc_length; ++s) {
-        std::cout << "Slice nprim " << slc_truth.nprim[s] << std::endl;
-      }
-      /*	
-      if (count % 10 == 0) {
-        std::cout << "Processing event " << count << std::endl;
-        std::cout << "Run " << run << " subrun " << subrun << " pot " << pot << std::endl;
+	std::cout << std::endl;
+        std::cout << "New Slice: Slice nprim " << slc_truth.nprim[s] << std::endl;
+	if (nu_truth.nu_iscc[slc_truth.slc_nu_index[s]]) {std::cout << "ISCC Evaluated to True !!!" << std::endl;}
 
-        count += 1;
-      }
-      */
+	//"run:subrun:evt:slc:mode:pdg:vtx_x:vtx_y:vtx_z"
+	slc_tree->Fill(
+	               run,
+		       subrun,
+		       evt,
+		       slc_truth.slc_self[s],
+		       slc_truth.slc_genie_mode[s],
+		       slc_truth.slc_true_pdg[s],
+		       nu_truth.nu_iscc[slc_truth.slc_nu_index[s]],
+		       nu_truth.nu_isnc[slc_truth.slc_nu_index[s]],
+		       slc_truth.slc_x[s],
+		       slc_truth.slc_y[s],
+		       slc_truth.slc_z[s]
+		      );        
 
-      //"run:subrun:ev:slc:pdg:iscc:isnc:mode:Q2:vtx_x:vtx_y:vtx_z"
-      //slc_tree->Fill(run, subrun, evt, slc_id, slc_pdg, slc_iscc, slc_isnc, slc_genie_mode, slc_Q2, slc_vtx_x, slc_vtx_y, slc_vtx_z);
+        std::cout << "Loop over Prime Particles " << slc_truth.nprim[s] << std::endl;
+	
+	for (int pr = nprim_prev; pr < slc_truth.nprim[s] + nprim_prev; ++pr) {
+	  //std::cout << "pr index " << pr << std::endl;
+	  //std::cout << "mode " << slc_truth.slc_genie_mode[s] << " pdg " << slc_truth.prim_pdg[pr] << " parent " << slc_truth.prim_parent[pr] << std::endl; 	  
+	  //std::cout << "genE " << slc_truth.prim_genE[pr] << " start_x " << slc_truth.prim_startx[pr] << " end_x " <<  slc_truth.prim_endx[pr] << " px " << slc_truth.prim_px[pr] << std::endl; 
 
-      //std::cout << "Filled Slice tree" << std::endl;
-      /*
-      nu_prim_tree->Fill(slc_id, 
-			 nu_prim_pdg, 
-			 nu_prim_genE, 
-	                 nu_prim_start_x,	      
-	                 nu_prim_start_y,	      
-	                 nu_prim_start_z,
-	                 nu_prim_end_x,	      
-	                 nu_prim_end_y,	      
-	                 nu_prim_end_z,
-			 nu_prim_px,	      
-			 nu_prim_py,	      
-			 nu_prim_pz	      
-			);	      
-      */
-      std::cout << "Filled the nu_prim_tree" << std::endl;
-   
+          //run:subrun:evt:slc:mode:pdg:parent:genE:start_x:start_y:start_z:end_x:end_y:end_z:px:py:pz
+	  
+	  particle_tree1->Fill(
+			      run,
+			      subrun,
+			      evt,
+                              slc_truth.slc_self[s], 
+                              slc_truth.prim_pdg[pr], 
+                              slc_truth.G4ID[pr], 
+                              slc_truth.prim_parent[pr], 
+                              slc_truth.prim_genE[pr], 
+                              slc_truth.prim_px[pr], 
+                              slc_truth.prim_py[pr], 
+                              slc_truth.prim_pz[pr] 
+			      ); 
+	  
+	  particle_tree2->Fill(
+			      run,
+			      subrun,
+			      evt,
+                              slc_truth.slc_self[s], 
+                              slc_truth.prim_startx[pr], 
+                              slc_truth.prim_starty[pr], 
+                              slc_truth.prim_startz[pr], 
+                              slc_truth.prim_endx[pr], 
+                              slc_truth.prim_endy[pr], 
+                              slc_truth.prim_endz[pr]
+			      ); 
+
+	  std::cout << std::endl;
+          std::cout << "Primary Particle " << pr << " pdg " << slc_truth.prim_pdg[pr] << std::endl;
+	  std::cout << "Loop over daughter particles of this primary" << std::endl;
+	  //std::cout << "Starting index " << slc_truth.prim_daughters_idx[pr] << " number of daughters " << slc_truth.prim_daughters_length[pr] << std::endl; 				
+	  
+	  int stop = 0;
+	  if ((pr + 1) >  (slc_truth.nprim[s] + nprim_prev-1)) {
+	    stop = pr;
+	  }
+	  else {
+	    stop = pr + 1;
+	  }
+	  std::cout << "pr " << pr << " stop " << stop << std::endl;
+	  std::cout << "Starting index " << slc_truth.prim_daughters_idx[pr] << " number of daughters: stopping index " << slc_truth.prim_daughters_idx[stop] << std::endl; 				
+	  for (int d = slc_truth.prim_daughters_idx[pr]; d < slc_truth.prim_daughters_idx[stop]; ++d) {
+            //std::cout << "daughter " << slc_truth.prim_daughters[d] << std::endl;
+            //std::cout << "G4ID " << part_truth.part_G4ID[d] << std::endl;
+	    // Now we need to loop through the true particles to find the G4ID that matches the daughter (track id)
+	    for (int p = 0; p < part_truth.part_length; ++p) {
+
+	      if (part_truth.part_G4ID[p] == slc_truth.prim_daughters[d]) {
+		std::cout << "daughter pdg " << part_truth.part_pdg[p] << " d " << d << " p " << p << std::endl;
+		//"run:subrun:evt:slc:pdg:parent:genE:px:py:pz"
+		daughter_tree1->Fill(
+				    run,
+				    subrun,
+				    evt,
+			            slc_truth.slc_self[s],	
+				    part_truth.part_pdg[p],
+				    slc_truth.G4ID[pr],
+				    part_truth.part_genE[p],
+				    part_truth.part_px[p],
+				    part_truth.part_py[p],
+				    part_truth.part_pz[p]
+			            );
+
+		
+		daughter_tree2->Fill(
+				    run,
+				    subrun,
+				    evt,
+			            slc_truth.slc_self[s],
+				    part_truth.part_genx[p],	
+				    part_truth.part_geny[p],	
+				    part_truth.part_genz[p],	
+				    part_truth.part_endx[p],	
+				    part_truth.part_endy[p],	
+				    part_truth.part_endz[p]	
+			            );
+		// break because some pi0's end up having an eta daughter with the same G4ID as a gamma ???
+		break;
+
+	      }
+
+	    }
+
+	  }
+	  std::cout << std::endl;
+
+        } // end of prim loop
+	nprim_prev = slc_truth.nprim[s];
+
+	std::cout << std::endl;
+
+      } // end of slice loop
+      
     } // end of loop over event tree
+    
+    std::cout << "Finished Event Loop" << std::endl;
+
+    hist_tot_pot->SetDirectory(0);
     slc_tree->SetDirectory(0);
-    //nu_prim_tree->SetDirectory(0);
+    particle_tree1->SetDirectory(0);
+    particle_tree2->SetDirectory(0);
+    daughter_tree1->SetDirectory(0);
+    daughter_tree2->SetDirectory(0);
     
     outfile->cd();
     
+    hist_tot_pot->Write();
     slc_tree->Write();
-    //nu_prim_tree->Write();
-    
+    particle_tree1->Write();
+    particle_tree2->Write();
+    daughter_tree1->Write();    
+    daughter_tree2->Write();    
+
     outfile->Close();
     infile->Close();
 
