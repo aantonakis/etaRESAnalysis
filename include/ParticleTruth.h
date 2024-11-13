@@ -36,6 +36,15 @@ public:
         std::string part_G4ID_str = part_tag + "G4ID";
 	int *part_G4ID = new int[part_length];
 
+	std::string part_parent_str = part_tag + "parent";
+	UInt_t *part_parent = new UInt_t[part_length];
+	
+	std::string part_start_process_str = part_tag + "start_process";
+	Short_t *part_start_process = new Short_t[part_length];	
+
+        std::string part_interaction_id_str = part_tag + "interaction_id";
+	int *part_interaction_id = new int[part_length];
+
         std::string part_genE_str = part_tag + "genE";
 	float *part_genE = new float[part_length];
 	
@@ -70,6 +79,9 @@ public:
 	  tree->SetBranchAddress(part_length_str.c_str(), &part_length);
 	  tree->SetBranchAddress(part_pdg_str.c_str(), part_pdg);
 	  tree->SetBranchAddress(part_G4ID_str.c_str(), part_G4ID);
+	  tree->SetBranchAddress(part_parent_str.c_str(), part_parent);
+	  tree->SetBranchAddress(part_start_process_str.c_str(), part_start_process);
+	  tree->SetBranchAddress(part_interaction_id_str.c_str(), part_interaction_id);
 	  tree->SetBranchAddress(part_genE_str.c_str(), part_genE);
 	  tree->SetBranchAddress(part_px_str.c_str(), part_px);
 	  tree->SetBranchAddress(part_py_str.c_str(), part_py);

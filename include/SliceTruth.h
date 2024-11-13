@@ -32,13 +32,16 @@ public:
 
 
 	std::string slc_self_str = "rec.slc.self";
-	int *slc_self = new int[slc_length];
+	Int_t *slc_self = new Int_t[slc_length];
 
         std::string slc_genie_mode_str = slc_tag + "genie_mode";
 	Short_t *slc_genie_mode = new Short_t[slc_length];
 	
 	std::string slc_pdg_str = slc_tag + "pdg";
 	int *slc_true_pdg = new int[slc_length];
+
+	std::string slc_parent_pdg_str = slc_tag + "parent_pdg";
+	Int_t *slc_parent_pdg = new Int_t[slc_length];
 
 	// I believe this is the MC nu index associated with the slice
 	std::string slc_nu_index_str = slc_tag + "index";
@@ -134,6 +137,7 @@ public:
 	  tree->SetBranchAddress(slc_self_str.c_str(), slc_self);
 	  tree->SetBranchAddress(slc_genie_mode_str.c_str(), slc_genie_mode);
 	  tree->SetBranchAddress(slc_pdg_str.c_str(), slc_true_pdg);
+	  tree->SetBranchAddress(slc_parent_pdg_str.c_str(), slc_parent_pdg);
 	  tree->SetBranchAddress(slc_nu_index_str.c_str(), slc_nu_index);
           tree->SetBranchAddress(iscc_str.c_str(), iscc);
           tree->SetBranchAddress(isnc_str.c_str(), isnc);

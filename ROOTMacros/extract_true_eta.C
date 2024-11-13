@@ -37,6 +37,10 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     TNtuple* daughter_tree1 = new TNtuple("daughter_tree1", "daughter_tree1", "run:subrun:evt:slc:pdg:parent:genE:px:py:pz");
     TNtuple* daughter_tree2 = new TNtuple("daughter_tree2", "daughter_tree2", "run:subrun:evt:slc:start_x:start_y:start_z:end_x:end_y:end_z");
 
+    TNtuple* cosmic_tree1 = new TNtuple("cosmic_tree1", "cosmic_tree1", "run:subrun:evt:pdg:genE:pc:py:pz");
+    TNtuple* cosmic_tree2 = new TNtuple("cosmic_tree2", "cosmic_tree2", "run:subrun:evt:start_x:start_y:start_z:end_x:end_y:end_z");
+
+
     // Access the event tree
     TTree* event_tree = (TTree*)infile->Get("recTree");
     Long64_t n_entries = event_tree->GetEntries();
@@ -88,12 +92,59 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 
       for (int nu = 0; nu < nu_truth.nu_length; ++nu) {std::cout << "MC Nu Mode " << nu_truth.nu_genie_mode[nu] << std::endl;}
 
+      std::cout << "Fill the cosmic trees" << std::endl;
+      for (int t = 0; t < part_truth.part_length; ++t) {
+        // interaction id == -1 for cosmic particles
+        if (part_truth.part_interaction_id[t] == -1) {
+	  cosmic_tree1->Fill(
+	                     run,
+		             subrun,
+		             evt,
+			     part_truth.part_pdg[t],
+			     part_truth.part_genE[t],
+			     part_truth.part_px[t],
+			     part_truth.part_py[t],
+			     part_truth.part_pz[t]
+	                    );	
+
+	  cosmic_tree2->Fill(
+	                     run,
+		             subrun,
+		             evt,
+			     part_truth.part_genx[t],
+			     part_truth.part_geny[t],
+			     part_truth.part_genz[t],
+			     part_truth.part_endx[t],
+			     part_truth.part_endy[t],
+			     part_truth.part_endz[t]
+	                    );	
+				
+	}   
+      } // end of loop over cosmics
       std::cout << "Loop over slices" << std::endl;
       int nprim_prev = 0;
       for (int s = 0; s < slc_truth.slc_length; ++s) {
 	std::cout << std::endl;
         std::cout << "New Slice: Slice nprim " << slc_truth.nprim[s] << std::endl;
 	if (nu_truth.nu_iscc[slc_truth.slc_nu_index[s]]) {std::cout << "ISCC Evaluated to True !!!" << std::endl;}
+
+	/*
+	// check if the slice is a cosmic and look through the true particles ...
+	if (slc_truth.slc_true_pdg[s] == -1) {
+	  std::cout << "WE HAVE A COSMIC !!! ---> LOOK AT  TRUE PARTICLES ..." << std::endl;
+	  std::cout << "Slice Self " << slc_truth.slc_self[s]  << " Slice Parent PDG "<< slc_truth.slc_parent_pdg[s] << std::endl;
+	  for (int t = 0; t < part_truth.part_length; ++t) {
+	    if (part_truth.part_pdg[t] == 13 || part_truth.part_pdg[t] == -13) {
+	      std::cout << "part pdg " << part_truth.part_pdg[t] 
+		        << " parent "  << part_truth.part_parent[t] 
+			<< " G4ID "    << part_truth.part_G4ID[t] 
+			<< " start_process " << part_truth.part_start_process[t] 
+			<< " interaction_id " << part_truth.part_interaction_id[t] << std::endl; 
+	    }
+	  }
+
+	}
+	*/
 
 	//"run:subrun:evt:slc:mode:pdg:vtx_x:vtx_y:vtx_z"
 	slc_tree->Fill(
@@ -222,7 +273,10 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     particle_tree2->SetDirectory(0);
     daughter_tree1->SetDirectory(0);
     daughter_tree2->SetDirectory(0);
-    
+    cosmic_tree1->SetDirectory(0);    
+    cosmic_tree2->SetDirectory(0);    
+
+
     outfile->cd();
     
     hist_tot_pot->Write();
@@ -231,6 +285,8 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     particle_tree2->Write();
     daughter_tree1->Write();    
     daughter_tree2->Write();    
+    cosmic_tree1->Write();
+    cosmic_tree2->Write();
 
     outfile->Close();
     infile->Close();
