@@ -1,5 +1,5 @@
-#ifndef SLICE_TRUTH_H
-#define SLICE_TRUTH_H
+#ifndef SLICE_INFO_H
+#define SLICE_INFO_H
 
 
 
@@ -16,11 +16,11 @@
 namespace analysis {
 
 
-class SliceTruth {
+class SliceInfo {
 
 public:
-        SliceTruth() {}
-        ~SliceTruth() {}
+        SliceInfo() {}
+        ~SliceInfo() {}
 
 
 	std::string slc_tag = "rec.slc.truth.";
@@ -46,6 +46,9 @@ public:
 	// I believe this is the MC nu index associated with the slice
 	std::string slc_nu_index_str = slc_tag + "index";
 	int *slc_nu_index = new int[slc_length];
+
+	std::string slc_resnum_str = slc_tag + "resnum";
+	int *slc_resnum = new int[slc_length];
 	
 	std::string iscc_str = slc_tag + "iscc";
 	std::string isnc_str = slc_tag + "isnc";
@@ -69,18 +72,24 @@ public:
 
 
         std::string nprim_tot_str = slc_tag + "prim..totarraysize";	
-	int nprim_tot = 500;
+	int nprim_tot = 1000;
 
 	std::string prim_tag = slc_tag + "prim.";
-	
+
 	std::string prim_pdg_str = prim_tag + "pdg";
 	int *prim_pdg = new int[nprim_tot];
 	
+	std::string slc_prim_length_str = prim_tag + ".length";
+	int *slc_prim_length = new Int_t[slc_length];
+	
+	std::string slc_prim_idx_str = prim_tag + ".idx";
+	Int_t *slc_prim_idx = new Int_t[slc_length];
+	
 	std::string prim_parent_str = prim_tag + "parent";
-	int *prim_parent = new int[nprim_tot];
+	UInt_t *prim_parent = new UInt_t[nprim_tot];
 	
 	std::string G4ID_str = prim_tag+"G4ID";
-	int *G4ID = new int[nprim_tot];
+	Int_t *G4ID = new Int_t[nprim_tot];
 
 	std::string cont_tpc_str = prim_tag+"cont_tpc";
 	Char_t *cont_tpc = new Char_t[nprim_tot];
@@ -116,7 +125,7 @@ public:
 
 	
 	std::string nprim_daughters_str = prim_tag+"daughters..totarraysize";
-	int nprim_daughters_tot = 500;
+	int nprim_daughters_tot = 1000;
 	
 	std::string prim_daughters_str = prim_tag+"daughters";
 	UInt_t *prim_daughters = new UInt_t[nprim_daughters_tot];
@@ -130,7 +139,36 @@ public:
 	Int_t *prim_daughters_length = new Int_t[nprim_tot];
 	
 
-        void setSliceTruthAddresses(TTree *tree) {
+	// --------------- RECO STUFF -------------------------------------- //
+
+	std::string slc_reco_tag = "rec.slc.reco.pfp.";
+
+	std::string slc_nu_score_str = "rec.slc.nu_score";
+	Float_t *slc_nu_score = new Float_t[slc_length];
+	
+	std::string slc_is_clear_cosmic_str = "rec.slc.is_clear_cosmic";
+	Char_t *slc_is_clear_cosmic = new Char_t[slc_length];
+
+	std::string slc_vtx_x_str = "rec.slc.vertex.x";
+	Float_t *slc_vtx_x = new Float_t[slc_length];
+
+	std::string slc_vtx_y_str = "rec.slc.vertex.y";
+	Float_t *slc_vtx_y = new Float_t[slc_length];
+
+	std::string slc_vtx_z_str = "rec.slc.vertex.z";
+	Float_t *slc_vtx_z = new Float_t[slc_length];
+
+	std::string slc_pfp_length_str = slc_reco_tag + ".length";
+	Int_t *slc_pfp_length = new Int_t[slc_length];
+
+	std::string slc_pfp_idx_str = slc_reco_tag + ".idx";
+	Int_t *slc_pfp_idx = new Int_t[slc_length];
+
+	//std::string slc_npfp_str = slc_reco_tag + "npfp";
+	//ULong64_t *slc_npfp = new ULong64_t[slc_length];
+	
+
+        void setSliceInfoAddresses(TTree *tree) {
           
 	  // Header Slice Info 
 	  tree->SetBranchAddress(slc_length_str.c_str(), &slc_length);
@@ -139,6 +177,7 @@ public:
 	  tree->SetBranchAddress(slc_pdg_str.c_str(), slc_true_pdg);
 	  tree->SetBranchAddress(slc_parent_pdg_str.c_str(), slc_parent_pdg);
 	  tree->SetBranchAddress(slc_nu_index_str.c_str(), slc_nu_index);
+	  tree->SetBranchAddress(slc_resnum_str.c_str(), slc_resnum);
           tree->SetBranchAddress(iscc_str.c_str(), iscc);
           tree->SetBranchAddress(isnc_str.c_str(), isnc);
           tree->SetBranchAddress(slc_x_str.c_str(), slc_x);
@@ -148,6 +187,8 @@ public:
 	  // primary particle info
           tree->SetBranchAddress(nprim_tot_str.c_str(), &nprim_tot);
           tree->SetBranchAddress(slc_nprim_str.c_str(), nprim);
+          tree->SetBranchAddress(slc_prim_length_str.c_str(), slc_prim_length);
+          tree->SetBranchAddress(slc_prim_idx_str.c_str(), slc_prim_idx);
           tree->SetBranchAddress(prim_pdg_str.c_str(), prim_pdg);
           tree->SetBranchAddress(prim_parent_str.c_str(), prim_parent);
           tree->SetBranchAddress(G4ID_str.c_str(), G4ID);
@@ -168,6 +209,18 @@ public:
           tree->SetBranchAddress(nprim_daughters_str.c_str(), &nprim_daughters_tot);
           tree->SetBranchAddress(prim_daughters_str.c_str(), prim_daughters);
           tree->SetBranchAddress(prim_daughters_idx_str.c_str(), prim_daughters_idx);
+
+
+	  // RECO STUFF 
+          tree->SetBranchAddress(slc_nu_score_str.c_str(), slc_nu_score);
+          tree->SetBranchAddress(slc_is_clear_cosmic_str.c_str(), slc_is_clear_cosmic);
+          tree->SetBranchAddress(slc_vtx_x_str.c_str(), slc_vtx_x);
+          tree->SetBranchAddress(slc_vtx_y_str.c_str(), slc_vtx_y);
+          tree->SetBranchAddress(slc_vtx_z_str.c_str(), slc_vtx_z);
+          tree->SetBranchAddress(slc_pfp_length_str.c_str(), slc_pfp_length);
+          tree->SetBranchAddress(slc_pfp_idx_str.c_str(), slc_pfp_idx);
+          //tree->SetBranchAddress(slc_npfp_str.c_str(), slc_npfp);
+
 
 
 	}

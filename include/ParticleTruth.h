@@ -31,10 +31,10 @@ public:
 	Int_t part_length = 1000;
 
         std::string part_pdg_str = part_tag + "pdg";
-	int *part_pdg = new int[part_length];
+	Int_t *part_pdg = new Int_t[part_length];
 
         std::string part_G4ID_str = part_tag + "G4ID";
-	int *part_G4ID = new int[part_length];
+	Int_t *part_G4ID = new Int_t[part_length];
 
 	std::string part_parent_str = part_tag + "parent";
 	UInt_t *part_parent = new UInt_t[part_length];
@@ -43,32 +43,32 @@ public:
 	Short_t *part_start_process = new Short_t[part_length];	
 
         std::string part_interaction_id_str = part_tag + "interaction_id";
-	int *part_interaction_id = new int[part_length];
+	Int_t *part_interaction_id = new Int_t[part_length];
 
         std::string part_genE_str = part_tag + "genE";
-	float *part_genE = new float[part_length];
+	Float_t *part_genE = new Float_t[part_length];
 	
         std::string part_px_str = part_tag + "genp.x";
-	float *part_px = new float[part_length];
+	Float_t *part_px = new Float_t[part_length];
         std::string part_py_str = part_tag + "genp.y";
-	float *part_py = new float[part_length];
+	Float_t *part_py = new Float_t[part_length];
         std::string part_pz_str = part_tag + "genp.z";
-	float *part_pz = new float[part_length];
+	Float_t *part_pz = new Float_t[part_length];
 
 	
         std::string part_genx_str = part_tag + "gen.x";
-	float *part_genx = new float[part_length];
+	Float_t *part_genx = new Float_t[part_length];
         std::string part_geny_str = part_tag + "gen.y";
-	float *part_geny = new float[part_length];
+	Float_t *part_geny = new Float_t[part_length];
         std::string part_genz_str = part_tag + "gen.z";
-	float *part_genz = new float[part_length];
+	Float_t *part_genz = new Float_t[part_length];
 
         std::string part_endx_str = part_tag + "end.x";
-	float *part_endx = new float[part_length];
+	Float_t *part_endx = new Float_t[part_length];
         std::string part_endy_str = part_tag + "end.y";
-	float *part_endy = new float[part_length];
+	Float_t *part_endy = new Float_t[part_length];
         std::string part_endz_str = part_tag + "end.z";
-	float *part_endz = new float[part_length];
+	Float_t *part_endz = new Float_t[part_length];
 	
 	
 	
