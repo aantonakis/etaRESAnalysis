@@ -149,6 +149,12 @@ public:
 	std::string slc_is_clear_cosmic_str = "rec.slc.is_clear_cosmic";
 	Char_t *slc_is_clear_cosmic = new Char_t[slc_length];
 
+	std::string slc_fmatch_time_str = "rec.slc.fmatch.time";
+	Float_t *slc_fmatch_time = new Float_t[slc_length];
+
+	std::string slc_fmatch_score_str = "rec.slc.fmatch.score";
+	Float_t *slc_fmatch_score = new Float_t[slc_length];
+	
 	std::string slc_vtx_x_str = "rec.slc.vertex.x";
 	Float_t *slc_vtx_x = new Float_t[slc_length];
 
@@ -214,7 +220,9 @@ public:
 	  // RECO STUFF 
           tree->SetBranchAddress(slc_nu_score_str.c_str(), slc_nu_score);
           tree->SetBranchAddress(slc_is_clear_cosmic_str.c_str(), slc_is_clear_cosmic);
-          tree->SetBranchAddress(slc_vtx_x_str.c_str(), slc_vtx_x);
+          tree->SetBranchAddress(slc_fmatch_time_str.c_str(), slc_fmatch_time);
+          tree->SetBranchAddress(slc_fmatch_score_str.c_str(), slc_fmatch_score);
+	  tree->SetBranchAddress(slc_vtx_x_str.c_str(), slc_vtx_x);
           tree->SetBranchAddress(slc_vtx_y_str.c_str(), slc_vtx_y);
           tree->SetBranchAddress(slc_vtx_z_str.c_str(), slc_vtx_z);
           tree->SetBranchAddress(slc_pfp_length_str.c_str(), slc_pfp_length);

@@ -32,7 +32,7 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     //TH1D* hist_tot_pot = new TH1D(); 
     TH1D* hist_tot_pot = (TH1D*)infile->Get("TotalPOT")->Clone("TOTPOT_Clone");
 
-    TNtuple* slc_tree = new TNtuple("slc_tree", "slc_tree", "run:subrun:evt:slc:nu_score:is_clear_cosmic:vtx_x:vtx_y:vtx_z");
+    TNtuple* slc_tree = new TNtuple("slc_tree", "slc_tree", "run:subrun:evt:slc:nu_score:is_clear_cosmic:fmatch_time:fmatch_score:vtx_x:vtx_y:vtx_z");
     TNtuple* slc_truth_tree = new TNtuple("slc_truth_tree", "slc_truth_tree", "run:subrun:evt:slc:mode:pdg:iscc:isnc:vtx_x:vtx_y:vtx_z");
 
     TNtuple* particle_tree1 = new TNtuple("particle_tree1", "particle_tree1", 
@@ -46,7 +46,7 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     TNtuple* daughter_tree1 = new TNtuple("daughter_tree1", "daughter_tree1", "run:subrun:evt:slc:pdg:parent:genE:px:py:pz");
     TNtuple* daughter_tree2 = new TNtuple("daughter_tree2", "daughter_tree2", "run:subrun:evt:slc:start_x:start_y:start_z:end_x:end_y:end_z");
 
-    TNtuple* cosmic_tree1 = new TNtuple("cosmic_tree1", "cosmic_tree1", "run:subrun:evt:pdg:genE:pc:py:pz");
+    TNtuple* cosmic_tree1 = new TNtuple("cosmic_tree1", "cosmic_tree1", "run:subrun:evt:pdg:genE:px:py:pz");
     TNtuple* cosmic_tree2 = new TNtuple("cosmic_tree2", "cosmic_tree2", "run:subrun:evt:start_x:start_y:start_z:end_x:end_y:end_z");
 
     
@@ -154,9 +154,9 @@ void extract_true_eta(const char* input_file, const char* output_file) {
       //int nprim_prev = 0;
       for (int s = 0; s < slc_truth.slc_length; ++s) {
 	std::cout << std::endl;
-        std::cout << "New Slice: Slice nprim " << slc_truth.nprim[s] << std::endl;
+        std::cout << "New Slice: Slice nprim " <<  slc_truth.slc_prim_length[s] << std::endl;
 	if (nu_truth.nu_iscc[slc_truth.slc_nu_index[s]]) {std::cout << "ISCC Evaluated to True !!!" << std::endl;}
-
+	//std::cout << "fmatch time " << slc_truth.slc_fmatch_time[s] << " score " << slc_truth.slc_fmatch_score[s] << std::endl;
 	slc_tree->Fill(
 	               run,
 		       subrun,
@@ -164,6 +164,10 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 		       slc_truth.slc_self[s],
 		       slc_truth.slc_nu_score[s], 	
 		       slc_truth.slc_is_clear_cosmic[s],
+		       slc_truth.slc_fmatch_time[s],
+		       slc_truth.slc_fmatch_score[s],
+		       //1.0,
+		       //1.0,
 		       slc_truth.slc_vtx_x[s],
 		       slc_truth.slc_vtx_y[s],
 		       slc_truth.slc_vtx_z[s]
@@ -246,7 +250,7 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 			     pfp_info.trk_end_z[pfp]
 	                    );
 
-	  track_tree1->Fill(
+	  track_tree2->Fill(
 			     run,
 			     subrun,
 			     evt,
@@ -260,12 +264,6 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 			     pfp_info.trk_bestScore[pfp],
 			     pfp_info.trk_truth_G4ID[pfp]
 	                    );
-
-
-
-
-
-
 
  
 	} // end of loop over reco pfps in this slice
