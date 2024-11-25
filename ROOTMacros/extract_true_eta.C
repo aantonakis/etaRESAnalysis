@@ -53,6 +53,8 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     TNtuple* cosmic_tree1 = new TNtuple("cosmic_tree1", "cosmic_tree1", "run:subrun:evt:pdg:genE:px:py:pz");
     TNtuple* cosmic_tree2 = new TNtuple("cosmic_tree2", "cosmic_tree2", "run:subrun:evt:start_x:start_y:start_z:end_x:end_y:end_z");
 
+    TNtuple* pfp_tree = new TNtuple("pfp_tree", "pfp_tree", "run:subrun:evt:slc:trackScore:parent_is_primary:t0");
+
     
     TNtuple* shower_tree1 = new TNtuple("shower_tree1", "shower_tree1", 
 					"run:subrun:evt:slc:trackScore:bestplane_energy:dir_x:dir_y:dir_z:start_x:start_y:start_z:end_x:end_y:end_z");
@@ -66,6 +68,9 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     
     TNtuple* track_tree2 = new TNtuple("track_tree2", "track_tree2", 
 					"run:subrun:evt:slc:p_muon:p_proton:p_pion:dazzle_muonScore:dazzle_protonScore:dazzle_pionScore:dazzle_bestScore:bestmatch_G4ID");
+
+
+    TNtuple* track_crthit_tree = new TNtuple("track_crthit_tree", "track_crthit_tree", "run:subrun:evt:slc:x:y:z");
 
     // Access the event tree
     TTree* event_tree = (TTree*)infile->Get("recTree");
@@ -208,6 +213,18 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 	    break;
 
 	  }
+
+	  pfp_tree->Fill(
+	                 run,
+			 subrun,
+			 evt,
+			 slc_truth.slc_self[s],
+			 pfp_info.pfp_trackScore[pfp],
+			 pfp_info.pfp_parent_is_primary[pfp],
+			 pfp_info.pfp_t0[pfp]
+			);
+		    	 
+
 	  std::cout << "Shower truth G4ID " << pfp_info.shw_truth_G4ID[pfp] << " track G4ID " << pfp_info.trk_truth_G4ID[pfp] << std::endl;
 	  shower_tree1->Fill(
 			     run,
@@ -274,7 +291,17 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 			     pfp_info.trk_truth_G4ID[pfp]
 	                    );
 
- 
+	  track_crthit_tree->Fill(
+			          run,
+			          subrun,
+			     	  evt,
+                             	  slc_truth.slc_self[s],
+ 				  pfp_info.trk_crtspacepoint_x[pfp],
+ 				  pfp_info.trk_crtspacepoint_y[pfp],
+ 				  pfp_info.trk_crtspacepoint_z[pfp]
+				 );
+
+
 	} // end of loop over reco pfps in this slice
 
 
@@ -394,10 +421,12 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     hist_tot_pot->SetDirectory(0);
     slc_tree->SetDirectory(0);
     slc_truth_tree->SetDirectory(0);
+    pfp_tree->SetDirectory(0);
     shower_tree1->SetDirectory(0);    
     shower_tree2->SetDirectory(0);    
     track_tree1->SetDirectory(0);    
-    track_tree2->SetDirectory(0);    
+    track_tree2->SetDirectory(0);  
+    track_crthit_tree->SetDirectory(0);  
     particle_tree1->SetDirectory(0);
     particle_tree2->SetDirectory(0);
     daughter_tree1->SetDirectory(0);
@@ -410,10 +439,12 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     hist_tot_pot->Write();
     slc_tree->Write();
     slc_truth_tree->Write();
+    pfp_tree->Write();
     shower_tree1->Write();
     shower_tree2->Write();
     track_tree1->Write();
     track_tree2->Write();
+    track_crthit_tree->Write();
     particle_tree1->Write();
     particle_tree2->Write();
     daughter_tree1->Write();    

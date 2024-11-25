@@ -38,6 +38,12 @@ public:
 	std::string pfp_trackScore_str = "rec.slc.reco.pfp.trackScore";
 	Float_t *pfp_trackScore = new Float_t[pfp_length];
 
+	std::string pfp_parent_is_primary_str = "rec.slc.reco.pfp.parent_is_primary";
+	Char_t *pfp_parent_is_primary = new Char_t[pfp_length]; 
+
+	std::string pfp_t0_str = "rec.slc.reco.pfp.t0";
+	Float_t *pfp_t0 = new Float_t[pfp_length]; 
+
 	// ------------------ Shower Variables ----------------- //
 	std::string shw_start_x_str = shw_tag + "start.x";
 	Float_t *shw_start_x = new Float_t[pfp_length];
@@ -169,11 +175,25 @@ public:
 
 
 
+	// ----------- CRT Stuff ---------------------------------- //
+	
+	std::string trk_crtspacepoint_x_str = trk_tag + "crtspacepoint.position.x";
+	Float_t *trk_crtspacepoint_x = new Float_t[pfp_length];
+
+	std::string trk_crtspacepoint_y_str = trk_tag + "crtspacepoint.position.y";
+	Float_t *trk_crtspacepoint_y = new Float_t[pfp_length];
+
+	std::string trk_crtspacepoint_z_str = trk_tag + "crtspacepoint.position.z";
+	Float_t *trk_crtspacepoint_z = new Float_t[pfp_length];
+
+
 	void setPFPInfoAddresses(TTree *tree) {
           
 	  // PFP Header Info 
 	  tree->SetBranchAddress(pfp_length_str.c_str(), &pfp_length);
 	  tree->SetBranchAddress(pfp_slcID_str.c_str(), pfp_slcID);
+	  tree->SetBranchAddress(pfp_parent_is_primary_str.c_str(), pfp_parent_is_primary);
+	  tree->SetBranchAddress(pfp_t0_str.c_str(), pfp_t0);
 
 	  // Shower Stuff
 	  tree->SetBranchAddress(shw_start_x_str.c_str(), shw_start_x);
@@ -214,6 +234,11 @@ public:
 	  tree->SetBranchAddress(trk_pionScore_str.c_str(), trk_pionScore);
 	  tree->SetBranchAddress(trk_bestScore_str.c_str(), trk_bestScore);
 	  tree->SetBranchAddress(trk_truth_G4ID_str.c_str(), trk_truth_G4ID);
+
+	  // CRT Stuff
+	  tree->SetBranchAddress(trk_crtspacepoint_x_str.c_str(), trk_crtspacepoint_x);
+	  tree->SetBranchAddress(trk_crtspacepoint_y_str.c_str(), trk_crtspacepoint_y);
+	  tree->SetBranchAddress(trk_crtspacepoint_z_str.c_str(), trk_crtspacepoint_z);
 
 
 	}
