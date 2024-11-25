@@ -26,8 +26,12 @@ void extract_true_eta(const char* input_file, const char* output_file) {
   
     //Open the input and output ROOT files
     TFile* infile = TFile::Open(input_file, "READ");
-    TFile* outfile = new TFile(output_file, "RECREATE");
+    if (!infile || infile->IsZombie()) {
+      std::cerr << "File is a zombie mate" << std::endl;
+      return;
+    }
 
+    TFile* outfile = new TFile(output_file, "RECREATE");
 
     //TH1D* hist_tot_pot = new TH1D(); 
     TH1D* hist_tot_pot = (TH1D*)infile->Get("TotalPOT")->Clone("TOTPOT_Clone");
@@ -65,6 +69,11 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 
     // Access the event tree
     TTree* event_tree = (TTree*)infile->Get("recTree");
+    if (!event_tree) {
+      std::cerr << "File doesn't have the tree you are looking for mate!" << std::endl;
+      infile->Close();
+      return;
+    }
     Long64_t n_entries = event_tree->GetEntries();
     std::cout << "This tree has " << n_entries << " events ..." << std::endl;
 
