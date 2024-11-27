@@ -47,7 +47,7 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     					 "run:subrun:evt:slc:start_x:start_y:start_z:end_x:end_y:end_z");
 
 
-    TNtuple* daughter_tree1 = new TNtuple("daughter_tree1", "daughter_tree1", "run:subrun:evt:slc:pdg:parent:genE:px:py:pz");
+    TNtuple* daughter_tree1 = new TNtuple("daughter_tree1", "daughter_tree1", "run:subrun:evt:slc:pdg:G4ID:parent:genE:px:py:pz");
     TNtuple* daughter_tree2 = new TNtuple("daughter_tree2", "daughter_tree2", "run:subrun:evt:slc:start_x:start_y:start_z:end_x:end_y:end_z");
 
     TNtuple* cosmic_tree1 = new TNtuple("cosmic_tree1", "cosmic_tree1", "run:subrun:evt:pdg:genE:px:py:pz");
@@ -375,6 +375,7 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 				    evt,
 			            slc_truth.slc_self[s],	
 				    part_truth.part_pdg[p],
+				    part_truth.part_G4ID[p],
 				    slc_truth.G4ID[pr],
 				    part_truth.part_genE[p],
 				    part_truth.part_px[p],
