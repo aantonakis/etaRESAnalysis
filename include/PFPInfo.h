@@ -37,6 +37,12 @@ public:
 	
 	std::string pfp_trackScore_str = "rec.slc.reco.pfp.trackScore";
 	Float_t *pfp_trackScore = new Float_t[pfp_length];
+	
+	std::string pfp_id_str = "rec.slc.reco.pfp.id";
+	Int_t *pfp_id = new Int_t[pfp_length]; 
+	
+	std::string pfp_parent_str = "rec.slc.reco.pfp.parent";
+	Int_t *pfp_parent = new Int_t[pfp_length]; 
 
 	std::string pfp_parent_is_primary_str = "rec.slc.reco.pfp.parent_is_primary";
 	Char_t *pfp_parent_is_primary = new Char_t[pfp_length]; 
@@ -192,6 +198,8 @@ public:
 	  // PFP Header Info 
 	  tree->SetBranchAddress(pfp_length_str.c_str(), &pfp_length);
 	  tree->SetBranchAddress(pfp_slcID_str.c_str(), pfp_slcID);
+	  tree->SetBranchAddress(pfp_id_str.c_str(), pfp_id);
+	  tree->SetBranchAddress(pfp_parent_str.c_str(), pfp_parent);
 	  tree->SetBranchAddress(pfp_parent_is_primary_str.c_str(), pfp_parent_is_primary);
 	  tree->SetBranchAddress(pfp_t0_str.c_str(), pfp_t0);
 

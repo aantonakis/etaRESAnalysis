@@ -53,7 +53,7 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     TNtuple* cosmic_tree1 = new TNtuple("cosmic_tree1", "cosmic_tree1", "run:subrun:evt:pdg:genE:px:py:pz");
     TNtuple* cosmic_tree2 = new TNtuple("cosmic_tree2", "cosmic_tree2", "run:subrun:evt:start_x:start_y:start_z:end_x:end_y:end_z");
 
-    TNtuple* pfp_tree = new TNtuple("pfp_tree", "pfp_tree", "run:subrun:evt:slc:trackScore:parent_is_primary:t0");
+    TNtuple* pfp_tree = new TNtuple("pfp_tree", "pfp_tree", "run:subrun:evt:slc:trackScore:id:parent:parent_is_primary:t0");
 
     
     TNtuple* shower_tree1 = new TNtuple("shower_tree1", "shower_tree1", 
@@ -220,6 +220,8 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 			 evt,
 			 slc_truth.slc_self[s],
 			 pfp_info.pfp_trackScore[pfp],
+			 pfp_info.pfp_id[pfp],
+			 pfp_info.pfp_parent[pfp],
 			 pfp_info.pfp_parent_is_primary[pfp],
 			 pfp_info.pfp_t0[pfp]
 			);
