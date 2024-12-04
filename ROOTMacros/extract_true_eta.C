@@ -14,6 +14,7 @@
 #include "../include/MCNuTruth.h"
 #include "../include/ParticleTruth.h"
 #include "../include/PFPInfo.h"
+#include "../include/CRTInfo.h"
 
 using namespace analysis;
 
@@ -37,7 +38,7 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     TH1D* hist_tot_pot = (TH1D*)infile->Get("TotalPOT")->Clone("TOTPOT_Clone");
 
     TNtuple* slc_tree = new TNtuple("slc_tree", "slc_tree", "run:subrun:evt:slc:nu_score:is_clear_cosmic:fmatch_time:fmatch_score:vtx_x:vtx_y:vtx_z");
-    TNtuple* slc_truth_tree = new TNtuple("slc_truth_tree", "slc_truth_tree", "run:subrun:evt:slc:mode:pdg:iscc:isnc:vtx_x:vtx_y:vtx_z");
+    TNtuple* slc_truth_tree = new TNtuple("slc_truth_tree", "slc_truth_tree", "run:subrun:evt:slc:mode:pdg:iscc:isnc:vtx_x:vtx_y:vtx_z:isvtxcont");
 
     TNtuple* particle_tree1 = new TNtuple("particle_tree1", "particle_tree1", 
     					 "run:subrun:evt:slc:pdg:G4ID:parent:genE:px:py:pz");
@@ -72,6 +73,9 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 
     TNtuple* track_crthit_tree = new TNtuple("track_crthit_tree", "track_crthit_tree", "run:subrun:evt:slc:x:y:z");
 
+    TNtuple* crt_tree = new TNtuple("crt_tree", "crt_tree", "run:subrun:evt:x:y:z:t");
+
+
     // Access the event tree
     TTree* event_tree = (TTree*)infile->Get("recTree");
     if (!event_tree) {
@@ -95,6 +99,9 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 
     PFPInfo pfp_info;
     pfp_info.setPFPInfoAddresses(event_tree);
+
+    CRTInfo crt_info;
+    crt_info.setCRTInfoAddresses(event_tree);
     
     // Header Variables
     UInt_t run;
@@ -131,6 +138,22 @@ void extract_true_eta(const char* input_file, const char* output_file) {
       std::cout << std::endl;
 
       for (int nu = 0; nu < nu_truth.nu_length; ++nu) {std::cout << "MC Nu Mode " << nu_truth.nu_genie_mode[nu] << std::endl;}
+
+
+      std::cout << "Fill the CRT Trees" << std::endl;
+      for (int c = 0; c < crt_info.crt_sp_length; ++c) {
+        
+        crt_tree->Fill(
+		       run,
+		       subrun,
+		       evt,
+		       crt_info.crt_sp_x[c],
+		       crt_info.crt_sp_y[c],
+		       crt_info.crt_sp_z[c],
+		       crt_info.crt_sp_t[c]
+		      );
+
+      }
 
       std::cout << "Fill the cosmic trees" << std::endl;
       for (int t = 0; t < part_truth.part_length; ++t) {
@@ -199,7 +222,8 @@ void extract_true_eta(const char* input_file, const char* output_file) {
 		       nu_truth.nu_isnc[slc_truth.slc_nu_index[s]],
 		       slc_truth.slc_x[s],
 		       slc_truth.slc_y[s],
-		       slc_truth.slc_z[s]
+		       slc_truth.slc_z[s],
+		       slc_truth.isvtxcont[s]
 		      );        
 
 	// Loop over the reco pfps --> Should be same number of showers and tracks !!!!
@@ -436,6 +460,7 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     daughter_tree2->SetDirectory(0);
     cosmic_tree1->SetDirectory(0);    
     cosmic_tree2->SetDirectory(0);    
+    crt_tree->SetDirectory(0);
 
     outfile->cd();
     
@@ -454,7 +479,9 @@ void extract_true_eta(const char* input_file, const char* output_file) {
     daughter_tree2->Write();
     cosmic_tree1->Write();
     cosmic_tree2->Write();
-    
+    crt_tree->Write();    
+
+
     std::cout << "Finished Writing Trees" << std::endl;
     outfile->Close();
     infile->Close();

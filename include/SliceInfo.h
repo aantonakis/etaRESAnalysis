@@ -54,6 +54,10 @@ public:
 	std::string isnc_str = slc_tag + "isnc";
         Char_t *iscc = new Char_t[slc_length];
         Char_t *isnc = new Char_t[slc_length];
+
+	std::string isvtxcont_str = slc_tag + "isvtxcont";
+        Char_t *isvtxcont = new Char_t[slc_length];
+
 	
 	std::string slc_x_str = slc_tag + "position.x";
 	std::string slc_y_str = slc_tag + "position.y";
@@ -186,6 +190,7 @@ public:
 	  tree->SetBranchAddress(slc_resnum_str.c_str(), slc_resnum);
           tree->SetBranchAddress(iscc_str.c_str(), iscc);
           tree->SetBranchAddress(isnc_str.c_str(), isnc);
+          tree->SetBranchAddress(isvtxcont_str.c_str(), isvtxcont);
           tree->SetBranchAddress(slc_x_str.c_str(), slc_x);
           tree->SetBranchAddress(slc_y_str.c_str(), slc_y);
           tree->SetBranchAddress(slc_z_str.c_str(), slc_z);
