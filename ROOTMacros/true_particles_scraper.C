@@ -36,7 +36,7 @@ void true_particles_scraper(const char* input_file, const char* output_file) {
     TNtuple* event_tree_out = new TNtuple("event_tree", "event_tree", "run:subrun:evt:ngenevt");
     TNtuple* part_tree1 = new TNtuple("part_tree1", "part_tree1", "run:subrun:evt:G4ID:pdg:parent:interaction_id:cont_tpc:crosses_tpc:contained:cryostat");
     TNtuple* part_tree2 = new TNtuple("part_tree2", "part_tree2", "run:subrun:evt:genE:px:py:pz:genx:geny:genz:endE");
-    TNtuple* part_tree3 = new TNtuple("part_tree3", "part_tree3", "run:subrun:evt:start_x:start_y:start_z:end_x:end_y:end_z");
+    TNtuple* part_tree3 = new TNtuple("part_tree3", "part_tree3", "run:subrun:evt:start_x:start_y:start_z:end_x:end_y:end_z:genT:startT:endT");
 
     // Access the event tree
     TTree* event_tree = (TTree*)infile->Get("recTree");
@@ -134,7 +134,10 @@ void true_particles_scraper(const char* input_file, const char* output_file) {
 		         part_info.part_startz[p],
 		         part_info.part_endx[p],
 		         part_info.part_endy[p],
-		         part_info.part_endz[p]
+		         part_info.part_endz[p],
+		         part_info.part_genT[p],
+		         part_info.part_startT[p],
+		         part_info.part_endT[p]
 		        );
 
 

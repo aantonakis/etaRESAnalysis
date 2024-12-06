@@ -96,7 +96,19 @@ public:
 	
         std::string part_endE_str = part_tag + "endE";
 	Float_t *part_endE = new Float_t[part_length];
+
+
+	// Truth timing information
+        std::string part_genT_str = part_tag + "genT";
+	Float_t *part_genT = new Float_t[part_length];
+
+        std::string part_startT_str = part_tag + "startT";
+	Float_t *part_startT = new Float_t[part_length];
 	
+        std::string part_endT_str = part_tag + "endT";
+	Float_t *part_endT = new Float_t[part_length];
+	
+
 	// Daughter Info
 	/*	
 	std::string daughters_length_str = part_tag+"daughters..totarraysize";
@@ -147,6 +159,12 @@ public:
 	  tree->SetBranchAddress(part_endx_str.c_str(), part_endx);
 	  tree->SetBranchAddress(part_endy_str.c_str(), part_endy);
 	  tree->SetBranchAddress(part_endz_str.c_str(), part_endz);
+
+	  // Truth timing
+	  tree->SetBranchAddress(part_genT_str.c_str(), part_genT);
+	  tree->SetBranchAddress(part_startT_str.c_str(), part_startT);
+	  tree->SetBranchAddress(part_endT_str.c_str(), part_endT);
+	  
 
 	  // Daughter stuff
 	  //tree->SetBranchAddress(daughters_length_str.c_str(), &daughters_length);
