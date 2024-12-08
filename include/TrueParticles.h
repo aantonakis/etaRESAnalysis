@@ -109,6 +109,27 @@ public:
 	Float_t *part_endT = new Float_t[part_length];
 	
 
+	/*
+        std::string part_visE_0_0_str = part_tag + "plane.0.0.visE";
+	Float_t *part_visE_0_0 = new Float_t[part_length];
+
+        std::string part_visE_0_1_str = part_tag + "plane.0.1.visE";
+	Float_t *part_visE_0_1 = new Float_t[part_length];
+	
+        std::string part_visE_0_2_str = part_tag + "plane.0.2.visE";
+	Float_t *part_visE_0_2 = new Float_t[part_length];
+
+
+        std::string part_visE_1_0_str = part_tag + "plane.0.0.visE";
+	Float_t *part_visE_1_0 = new Float_t[part_length];
+
+        std::string part_visE_1_1_str = part_tag + "plane.0.1.visE";
+	Float_t *part_visE_1_1 = new Float_t[part_length];
+	
+        std::string part_visE_1_2_str = part_tag + "plane.0.2.visE";
+	Float_t *part_visE_1_2 = new Float_t[part_length];
+	*/
+
 	// Daughter Info
 	/*	
 	std::string daughters_length_str = part_tag+"daughters..totarraysize";
