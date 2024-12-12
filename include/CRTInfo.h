@@ -27,7 +27,7 @@ public:
 	
 	
 	std::string crt_sp_length_str = crt_sp_tag+".length";
-	Int_t crt_sp_length = 100;
+	Int_t crt_sp_length = 5000;
         
 	std::string crt_sp_x_str = crt_sp_tag+"position.x";
 	Float_t *crt_sp_x = new Float_t[crt_sp_length];
