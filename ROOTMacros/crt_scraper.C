@@ -33,6 +33,7 @@ void crt_scraper(const char* input_file, const char* output_file) {
     //TH1D* hist_tot_pot = new TH1D(); 
     TH1D* hist_tot_pot = (TH1D*)infile->Get("TotalPOT")->Clone("TOTPOT_Clone");
 
+    TNtuple* event_tree_out = new TNtuple("event_tree", "event_tree", "run:subrun:evt:ngenevt");
     TNtuple* crt_tree = new TNtuple("crt_tree", "crt_tree", "run:subrun:evt:x:y:z:t");
 
 
@@ -55,10 +56,12 @@ void crt_scraper(const char* input_file, const char* output_file) {
     UInt_t run;
     UInt_t subrun;
     UInt_t evt;
-    //float pot = 0.;
+    UInt_t ngenevt;    
+
     event_tree->SetBranchAddress("rec.hdr.run", &run);
     event_tree->SetBranchAddress("rec.hdr.subrun", &subrun);
     event_tree->SetBranchAddress("rec.hdr.evt", &evt);
+    event_tree->SetBranchAddress("rec.hdr.ngenevt", &ngenevt);
     //event_tree->SetBranchAddress("rec.hdr.pot", &pot);
 
     std::cout << "Start Event Loop ..." << std::endl;
@@ -72,6 +75,14 @@ void crt_scraper(const char* input_file, const char* output_file) {
       std::cout << std::endl << std::endl << std::endl;
       std::cout << "// ------------------ Processing event ------------------ // " << count << std::endl;
       std::cout << "Run " << run << " subrun " << subrun << std::endl;
+
+      std::cout << "Filling the event tree" << std::endl;
+      event_tree_out->Fill(
+			   run,
+			   subrun,
+			   evt,
+			   ngenevt
+			  );
 
       count += 1;
       //}
@@ -98,11 +109,13 @@ void crt_scraper(const char* input_file, const char* output_file) {
     event_tree->ResetBranchAddresses();
 
     hist_tot_pot->SetDirectory(0);
+    event_tree_out->SetDirectory(0);
     crt_tree->SetDirectory(0);
 
     outfile->cd();
     
     hist_tot_pot->Write();
+    event_tree_out->Write();
     crt_tree->Write();    
 
 
